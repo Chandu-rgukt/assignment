@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = "https://YOUR-RENDER-BACKEND-URL/api/products";
+const API = "https://inventory-management-app-7s8f.onrender.com";
 
 
 export const getProducts = (params) =>
