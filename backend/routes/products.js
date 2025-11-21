@@ -8,11 +8,13 @@ const {
     updateProduct,
     importProducts,
     exportProducts,
-    getProductHistory
+    getProductHistory,
+    addProduct
 } = require('../controllers/productsController');
 
 
 router.get('/', getAllProducts);
+router.post("/", addProduct);
 router.get('/search', searchProducts);
 router.put('/:id', updateProduct);
 router.post('/import', importProducts);

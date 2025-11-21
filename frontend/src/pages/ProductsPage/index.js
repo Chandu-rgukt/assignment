@@ -5,6 +5,9 @@ import {
   exportCSV,
 } from "../../api/products";
 
+
+import AddProductModal from "../../components/AddProductModal/AddProductModal";
+
 import ProductTable from "../../components/ProductTable/ProductTable";
 import ImportModal from "../../components/ImportModal/ImportModal";
 import SidebarHistory from "../../components/SidebarHistory/SidebarHistory";
@@ -12,6 +15,8 @@ import SidebarHistory from "../../components/SidebarHistory/SidebarHistory";
 export default function ProductsPage() {
   const [categories, setCategories] = useState([]);
   const [category, setCategory] = useState("");
+  const [showAdd, setShowAdd] = useState(false);
+
 
 
   const [products, setProducts] = useState([]);
@@ -97,7 +102,21 @@ export default function ProductsPage() {
         >
           Export CSV
         </button>
+        <button
+  onClick={() => setShowAdd(true)}
+  className="px-4 py-1 bg-blue-600 text-white rounded"
+>
+  Add Product
+</button>
+
       </div>
+
+      <AddProductModal
+  open={showAdd}
+  onClose={() => setShowAdd(false)}
+  reload={loadProducts}
+/>
+
 
       <ProductTable
         products={products}

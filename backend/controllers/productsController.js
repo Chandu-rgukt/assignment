@@ -60,6 +60,43 @@ const searchProducts = (req, res) => {
     });
 };
 
+const addProduct = (req, res) => {
+  const { name, unit, category, brand, stock, status, image } = req.body;
+
+  if (!name || name.trim() === "")
+    return res.status(400).json({ error: "Name is required" });
+
+  db.get(
+    `SELECT id FROM products WHERE LOWER(name) = LOWER(?)`,
+    [name],
+    (err, row) => {
+      if (row) return res.status(400).json({ error: "Product name exists" });
+
+      const sql = `
+        INSERT INTO products (name, unit, category, brand, stock, status, image)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+      `;
+
+      db.run(
+        sql,
+        [name, unit, category, brand, stock || 0, status, image],
+        function (err2) {
+          if (err2) return res.status(500).json({ error: err2.message });
+
+          db.get(
+            `SELECT * FROM products WHERE id = ?`,
+            [this.lastID],
+            (err3, prod) => {
+              if (err3) return res.status(500).json({ error: err3.message });
+              res.json(prod);
+            }
+          );
+        }
+      );
+    }
+  );
+};
+
 const updateProduct = (req, res) => {
     const id = req.params.id;
 
@@ -102,7 +139,7 @@ const updateProduct = (req, res) => {
                     function (err3) {
                         if (err3) return res.status(500).json({ error: err3.message });
 
-                        // Insert into history if stock changed
+                      
                         if (oldStock !== stock) {
                             const historySQL = `
                                 INSERT INTO inventory_history (product_id, old_quantity, new_quantity, change_date, user_info)
@@ -118,7 +155,7 @@ const updateProduct = (req, res) => {
                             ]);
                         }
 
-                        // Return updated product
+                        
                         db.get(`SELECT * FROM products WHERE id = ?`, [id], (err4, updated) => {
                             if (err4) return res.status(500).json({ error: err4.message });
                             res.json(updated);
@@ -239,4 +276,5 @@ module.exports = {
     importProducts,
     exportProducts,
     getProductHistory,
+    addProduct
 };
